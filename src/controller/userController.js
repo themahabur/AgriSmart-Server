@@ -53,3 +53,39 @@ exports.getUser = async (req, res) => {
       .json({ message: "Error fetching user", error: error.message });
   }
 };
+
+exports.login = async (req, res) => {
+  try {
+    console.log("=== LOGIN REQUEST START ===");
+    console.log("Request body:", req.body);
+
+    const { email, password } = req.body;
+    console.log("Extracted email:", email);
+    console.log("Extracted password:", password);
+
+    const user = await Users.findOne({ email: email });
+    console.log("Found user:", user);
+
+    if (user) {
+      console.log("User ID:", user._id);
+      console.log("User name:", user.name);
+      console.log("User email:", user.email);
+      console.log("User district:", user.district);
+      console.log("User phone:", user.phone);
+      console.log("Stored password hash:", user.password);
+    } else {
+      console.log("No user found with this email");
+    }
+
+    console.log("=== LOGIN REQUEST END ===");
+
+    res
+      .status(200)
+      .json({ message: "Login console test completed", foundUser: !!user });
+  } catch (error) {
+    console.log("Login error:", error.message);
+    res
+      .status(500)
+      .json({ message: "Error logging in user", error: error.message });
+  }
+};

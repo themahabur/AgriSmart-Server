@@ -1,26 +1,22 @@
-// server.js
-const mongoose = require("mongoose");
-const express = require("express");
-const connectDB = require("./src/config/db");
-const app = express();
-const PORT = 5000;
-connectDB();
-const userRoutes = require("./src/router/userRouter");
+const express = require('express');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+const userRouter = require('./src/router/userRouter');
+const connectDB = require('./src/config/db');
 
-// Middleware to parse JSON
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
+// Middleware
 app.use(express.json());
 
-// Basic route
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
-
 // Routes
-app.use("/api/users", userRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/users", userRoutes);
+app.use('/api/users', userRouter);
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+// MongoDB connection
+connectDB();
+
+// Start server
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

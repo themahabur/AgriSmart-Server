@@ -1,0 +1,39 @@
+const mongoose = require('mongoose');
+
+const usersSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6, // optional: password must be at least 6 chars
+    },
+    district: {
+      type: String,
+      required: true,
+    },
+    upazila: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+      match: /^[0-9]{11}$/, // optional: Bangladeshi phone number format
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('Users', usersSchema);

@@ -1,12 +1,19 @@
 {
   "name": "agri-smart-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "AgriSmart Server - AI-powered agriculture platform backend",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "agriculture",
+    "ai",
+    "backend",
+    "api"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",

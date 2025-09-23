@@ -5,3 +5,7 @@ const generateToken = (payload, expiresIn = "7d") => {
     expiresIn: expiresIn,
   });
 };
+
+const verifyToken = (token) => {
+  return jwt.verify(token, process.env.JWT_SECRET);
+};

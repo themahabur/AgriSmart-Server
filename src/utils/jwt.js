@@ -17,3 +17,5 @@ const extractToken = (token) => {
   }
   return null;
 };
+
+module.exports = { generateToken, verifyToken, extractToken };

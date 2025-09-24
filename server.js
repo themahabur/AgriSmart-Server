@@ -18,5 +18,14 @@ app.use("/api/users", userRouter);
 // MongoDB connection
 connectDB();
 
-// Start server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.get("/", (req, res) => {
+  res.send("Agrismart server is running");
+});
+
+// Export the Express app for Vercel
+module.exports = app;
+
+// Start server (only for local development)
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+}

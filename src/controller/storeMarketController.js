@@ -38,6 +38,9 @@ const fetchAndStoreMarketData = async () => {
       };
     });
 
+    //  Delete old data and insert new data
+    await marketDataModule.deleteMany({});
+
     // Create new market data entry
     const marketDataEntry = new marketDataModule({
       todayMarketData: todayMarketData,

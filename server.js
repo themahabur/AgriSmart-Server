@@ -5,6 +5,8 @@ const dotenv = require("dotenv");
 const userRouter = require("./src/router/userRouter");
 const connectDB = require("./src/config/db");
 
+const axios = require("axios");
+
 dotenv.config();
 
 const app = express();
@@ -20,8 +22,48 @@ app.use("/api/users", userRouter);
 // MongoDB connection
 connectDB();
 
-app.get("/", (req, res) => {
-  res.send("Agrismart server is running");
+app.get("/", async (req, res) => {
+  try {
+    const [nameData, priceData] = await Promise.all([
+      axios.get(process.env.NAME_API),
+      axios.get(process.env.PRICE_API),
+    ]);
+    const marketPrice = priceData.data.data;
+    const nameDataArr = nameData.data.data.commodityNameList;
+
+    const todayMarketData = marketPrice.map((item1) => {
+      const match = nameDataArr.find(
+        (item2) => item2.value === item1.commodity_id
+      );
+      return {
+        ...item1,
+        name: match ? match.text : "Unknown",
+        nameEn: match ? match.text_en : "Unknown",
+        nameBn: match ? match.text_bn : "Unknown",
+      };
+    });
+
+    const preMarketData = priceData.data.prevPrice.map((item1) => {
+      const match = nameDataArr.find(
+        (item2) => item2.value === item1.commodity_id
+      );
+      return {
+        ...item1,
+        name: match ? match.text : "Unknown",
+        nameEn: match ? match.text_en : "Unknown",
+        nameBn: match ? match.text_bn : "Unknown",
+      };
+    });
+
+    res.status(200).json({
+      status: true,
+      message: "Success",
+      data: { todayMarketData: todayMarketData, preMarketData: preMarketData },
+    });
+  } catch (error) {
+    console.log("error", error);
+  }
+  // res.send("Agrismart server is running");
 });
 
 // Export the Express app for Vercel

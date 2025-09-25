@@ -1,5 +1,5 @@
 const express = require("express");
-const { getMarketData } = require("./marketController");
+const { getMarketData } = require("../controller/storeMarketController");
 
 const router = express.Router();
 

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const userRouter = require("./src/router/userRouter");
+const storeMarketRouter = require("./src/router/marketRouter");
 const connectDB = require("./src/config/db");
 
 const axios = require("axios");
@@ -21,6 +22,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/users", userRouter);
+app.use("/api/", storeMarketRouter);
 app.use("/api/update/marketData", fetchAndStoreMarketData);
 
 // MongoDB connection

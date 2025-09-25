@@ -1,7 +1,7 @@
 const axios = require("axios");
 const marketDataModule = require("../module/marketDataModule");
 
-const fetchAndStoreMarketData = async () => {
+const fetchAndStoreMarketData = async (req, res) => {
   try {
     // Fetch data from both APIs
     const [nameData, priceData] = await Promise.all([
@@ -38,54 +38,127 @@ const fetchAndStoreMarketData = async () => {
       };
     });
 
-    //  Delete old data and insert new data
-    await marketDataModule.deleteMany({});
+    // Get today's date in YYYY-MM-DD format for uniqueness
+    const today = new Date().toISOString().split("T")[0];
 
-    // Create new market data entry
-    const marketDataEntry = new marketDataModule({
-      todayMarketData: todayMarketData,
-      preMarketData: preMarketData,
-      fetchedAt: new Date(),
-      dataSource: "External API",
-    });
+    // Use upsert to update existing data or create new if doesn't exist
+    const marketDataEntry = await marketDataModule.findOneAndUpdate(
+      {
+        dataDate: today, // Use date as unique identifier
+      },
+      {
+        todayMarketData: todayMarketData,
+        preMarketData: preMarketData,
+        fetchedAt: new Date(),
+        dataSource: "External API",
+        dataDate: today,
+        totalTodayItems: todayMarketData.length,
+        totalPreItems: preMarketData.length,
+      },
+      {
+        upsert: true, // Create if doesn't exist
+        new: true, // Return updated document
+        runValidators: true,
+      }
+    );
 
-    // Save to MongoDB
-    const savedData = await marketDataEntry.save();
-
-    return {
+    const responseData = {
       success: true,
       message: "Market data fetched and stored successfully",
-      //   data: {
-      //     documentId: savedData._id,
-      //     todayItemsCount: savedData.totalTodayItems,
-      //     preItemsCount: savedData.totalPreItems,
-      //     fetchedAt: savedData.fetchedAt,
-      //     todayMarketData: savedData.todayMarketData,
-      //     preMarketData: savedData.preMarketData,
-      //   },
+      data: {
+        documentId: marketDataEntry._id,
+        dataDate: marketDataEntry.dataDate,
+        todayItemsCount: marketDataEntry.totalTodayItems,
+        preItemsCount: marketDataEntry.totalPreItems,
+        fetchedAt: marketDataEntry.fetchedAt,
+        isNewRecord:
+          !marketDataEntry.createdAt ||
+          marketDataEntry.createdAt === marketDataEntry.updatedAt,
+      },
     };
+
+    if (res) {
+      return res.status(200).json(responseData);
+    }
+
+    return responseData;
   } catch (error) {
     console.error("Error fetching and storing market data:", error);
-    throw {
+    const errorResponse = {
       success: false,
       message: "Failed to fetch and store market data",
       error: error.message,
     };
+
+    if (res) {
+      return res.status(500).json(errorResponse);
+    }
+
+    throw errorResponse;
   }
 };
 
 const getMarketData = async (req, res) => {
   try {
-    const marketData = await marketDataModule.find();
+    // Get query parameters for filtering
+    const {
+      date,
+      limit = 10,
+      page = 1,
+      sortBy = "fetchedAt",
+      sortOrder = "desc",
+    } = req.query;
 
-    res.send({ success: true, data: marketData });
+    let query = {};
+
+    // Filter by specific date if provided
+    if (date) {
+      query.dataDate = date;
+    }
+
+    // Calculate pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Build sort object
+    const sort = {};
+    sort[sortBy] = sortOrder === "desc" ? -1 : 1;
+
+    // Get total count for pagination
+    const totalRecords = await marketDataModule.countDocuments(query);
+
+    // Fetch market data with pagination and sorting
+    const marketData = await marketDataModule
+      .find(query)
+      .sort(sort)
+      .limit(parseInt(limit))
+      .skip(skip)
+      .lean(); // Use lean() for better performance
+
+    // Get the latest data if no specific date requested
+    const latestData = !date
+      ? await marketDataModule.findOne().sort({ fetchedAt: -1 }).lean()
+      : null;
+
+    res.status(200).json({
+      success: true,
+      data: marketData,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(totalRecords / parseInt(limit)),
+        totalRecords,
+        hasNextPage: parseInt(page) < Math.ceil(totalRecords / parseInt(limit)),
+        hasPrevPage: parseInt(page) > 1,
+      },
+      latestData: latestData,
+      message: `Found ${marketData.length} market data records`,
+    });
   } catch (error) {
     console.error("Error fetching market data:", error);
-    throw {
+    res.status(500).json({
       success: false,
       message: "Failed to fetch market data",
       error: error.message,
-    };
+    });
   }
 };
 

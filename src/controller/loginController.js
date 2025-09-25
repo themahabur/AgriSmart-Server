@@ -1,16 +1,11 @@
 const Users = require("../module/userModule");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../utils/jwt");
+const { handleError } = require("../utils/errorHandler");
 
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Email and password are required" });
-    }
 
     const user = await Users.findOne({ email });
     if (!user) {
@@ -29,11 +24,13 @@ exports.loginUser = async (req, res) => {
 
     res.status(200).json({
       status: true,
-      message: "Login successful",
+      message: [
+        { message: "Login successful" },
+        { message: "হালকা মুতে শুতে যাও লগইন হয়ে গেছে !😴" },
+      ],
       token,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ status: false, message: "Server error" });
+    return handleError(error, res);
   }
 };

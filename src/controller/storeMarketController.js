@@ -12,6 +12,36 @@ const fetchAndStoreMarketData = async (req, res) => {
     const marketPrice = priceData.data.data;
     const nameDataArr = nameData.data.data.commodityNameList;
 
+    // Get today's date in YYYY-MM-DD format for uniqueness
+    const today = new Date().toISOString().split("T")[0];
+
+    // Check if data already exists for today
+    const existingData = await marketDataModule.findOne({
+      "todayMarketData.price_date": today,
+    });
+
+    if (existingData) {
+      console.log("data exists");
+      // Data for today already exists, no need to store again
+      const responseData = {
+        success: true,
+        message: "Market data for today already exists, no update needed",
+        data: {
+          documentId: existingData._id,
+          todayItemsCount: existingData.totalTodayItems,
+          preItemsCount: existingData.totalPreItems,
+          fetchedAt: existingData.fetchedAt,
+          dataDate: today,
+          isUpdated: false,
+        },
+      };
+
+      if (res) {
+        return res.status(200).json(responseData);
+      }
+      return responseData;
+    }
+
     // Process today's market data
     const todayMarketData = marketPrice.map((item1) => {
       const match = nameDataArr.find(
@@ -38,29 +68,20 @@ const fetchAndStoreMarketData = async (req, res) => {
       };
     });
 
-    // Get today's date in YYYY-MM-DD format for uniqueness
-    const today = new Date().toISOString().split("T")[0];
+    // Delete all existing data (since it's old data)
+    await marketDataModule.deleteMany({});
 
-    // Use upsert to update existing data or create new if doesn't exist
-    const marketDataEntry = await marketDataModule.findOneAndUpdate(
-      {
-        dataDate: today, // Use date as unique identifier
-      },
-      {
+    // Create new market data entry
+    const marketDataEntry = new marketDataModule({
+      fetchedAt: new Date(),
+      dataSource: "External API",
+      totalTodayItems: todayMarketData.length,
+      totalPreItems: preMarketData.length,
+      data: {
         todayMarketData: todayMarketData,
         preMarketData: preMarketData,
-        fetchedAt: new Date(),
-        dataSource: "External API",
-        dataDate: today,
-        totalTodayItems: todayMarketData.length,
-        totalPreItems: preMarketData.length,
       },
-      {
-        upsert: true, // Create if doesn't exist
-        new: true, // Return updated document
-        runValidators: true,
-      }
-    );
+    });
 
     const responseData = {
       success: true,
@@ -103,8 +124,8 @@ const getMarketData = async (req, res) => {
     // Get query parameters for filtering
     const {
       date,
-      limit = 10,
-      page = 1,
+      limit = 0,
+      page = 0,
       sortBy = "fetchedAt",
       sortOrder = "desc",
     } = req.query;
@@ -142,14 +163,6 @@ const getMarketData = async (req, res) => {
     res.status(200).json({
       success: true,
       data: marketData,
-      pagination: {
-        currentPage: parseInt(page),
-        totalPages: Math.ceil(totalRecords / parseInt(limit)),
-        totalRecords,
-        hasNextPage: parseInt(page) < Math.ceil(totalRecords / parseInt(limit)),
-        hasPrevPage: parseInt(page) > 1,
-      },
-      latestData: latestData,
       message: `Found ${marketData.length} market data records`,
     });
   } catch (error) {

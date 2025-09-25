@@ -7,9 +7,6 @@ const storeMarketRouter = require("./src/router/marketRouter");
 const connectDB = require("./src/config/db");
 
 const axios = require("axios");
-const {
-  fetchAndStoreMarketData,
-} = require("./src/controller/storeMarketController");
 
 dotenv.config();
 
@@ -23,7 +20,6 @@ app.use(express.json());
 // Routes
 app.use("/api/users", userRouter);
 app.use("/api/", storeMarketRouter);
-app.use("/api/update/marketData", fetchAndStoreMarketData);
 
 // MongoDB connection
 connectDB();

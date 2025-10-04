@@ -164,6 +164,37 @@ const getKnowledgeHubContent = async (req, res) => {
   }
 };
 
+const getKnowledgeHubContentBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+
+    const content = await KnowledgeHub.findOne({ slug });
+
+    if (!content) {
+      return res.status(404).json({
+        success: false,
+        message: "Knowledge hub content not found",
+      });
+    }
+
+    // Increment views count
+    await KnowledgeHub.findByIdAndUpdate(content._id, { $inc: { views: 1 } });
+
+    res.status(200).json({
+      success: true,
+      data: content,
+      message: "Knowledge hub content retrieved successfully",
+    });
+  } catch (error) {
+    console.error("Error fetching knowledge hub content by slug:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch knowledge hub content",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createKnowledgeHubContent,
   getKnowledgeHubContent,

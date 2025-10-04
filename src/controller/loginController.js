@@ -9,14 +9,14 @@ exports.loginUser = async (req, res) => {
 
     const user = await Users.findOne({ email });
     if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
+      return res.status(404).json({ status: false, message: 'User not found' });
     }
 
     const isMatch = bcrypt.compareSync(password, user.password);
     if (!isMatch) {
       return res
         .status(401)
-        .json({ status: false, message: "Incorrect password" });
+        .json({ status: false, message: 'Incorrect password' });
     }
 
     const tokenPayload = { id: user._id, email: user.email };

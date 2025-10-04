@@ -195,6 +195,44 @@ const getKnowledgeHubContentBySlug = async (req, res) => {
   }
 };
 
+const updateKnowledgeHubContent = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    // Remove sensitive fields that shouldn't be updated directly
+    delete updateData._id;
+    delete updateData.createdAt;
+    delete updateData.updatedAt;
+
+    const updatedContent = await KnowledgeHub.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedContent) {
+      return res.status(404).json({
+        success: false,
+        message: "Knowledge hub content not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: updatedContent,
+      message: "Knowledge hub content updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating knowledge hub content:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update knowledge hub content",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createKnowledgeHubContent,
   getKnowledgeHubContent,

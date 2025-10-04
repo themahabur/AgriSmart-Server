@@ -43,7 +43,7 @@ const createKnowledgeHubContent = async (req, res) => {
     }
 
     // Create new knowledge hub content
-    const knowledgeHubContent = new KnowledgeHub({
+    const knowledgeHubContent = new KnowledgeHubModule({
       title,
       subtitle,
       summary: summary || "",
@@ -132,11 +132,11 @@ const getKnowledgeHubContent = async (req, res) => {
     sort[sortBy] = sortOrder === "desc" ? -1 : 1;
 
     // Get total count for pagination
-    const totalRecords = await KnowledgeHub.countDocuments(query);
+    const totalRecords = await KnowledgeHubModule.countDocuments(query);
     const totalPages = Math.ceil(totalRecords / parseInt(limit));
 
     // Fetch knowledge hub content with pagination and sorting
-    const content = await KnowledgeHub.find(query)
+    const content = await KnowledgeHubModule.find(query)
       .sort(sort)
       .limit(parseInt(limit))
       .skip(skip)
@@ -168,7 +168,7 @@ const getKnowledgeHubContentBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
 
-    const content = await KnowledgeHub.findOne({ slug });
+    const content = await KnowledgeHubModule.findOne({ slug });
 
     if (!content) {
       return res.status(404).json({
@@ -178,7 +178,9 @@ const getKnowledgeHubContentBySlug = async (req, res) => {
     }
 
     // Increment views count
-    await KnowledgeHub.findByIdAndUpdate(content._id, { $inc: { views: 1 } });
+    await KnowledgeHubModule.findByIdAndUpdate(content._id, {
+      $inc: { views: 1 },
+    });
 
     res.status(200).json({
       success: true,
@@ -205,7 +207,7 @@ const updateKnowledgeHubContent = async (req, res) => {
     delete updateData.createdAt;
     delete updateData.updatedAt;
 
-    const updatedContent = await KnowledgeHub.findByIdAndUpdate(
+    const updatedContent = await KnowledgeHubModule.findByIdAndUpdate(
       id,
       updateData,
       { new: true, runValidators: true }
@@ -237,7 +239,7 @@ const deleteKnowledgeHubContent = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedContent = await KnowledgeHub.findByIdAndDelete(id);
+    const deletedContent = await KnowledgeHubModule.findByIdAndDelete(id);
 
     if (!deletedContent) {
       return res.status(404).json({

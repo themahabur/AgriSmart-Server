@@ -16,7 +16,7 @@ router.get("/knowledge-hub", getKnowledgeHubContent);
 router.get("/knowledge-hub/slug/:slug", getKnowledgeHubContentBySlug);
 
 // Protected routes (require authentication)
-router.post("/knowledge-hub", authenticateToken, createKnowledgeHubContent);
+router.post("/knowledge-hub", createKnowledgeHubContent);
 router.put("/knowledge-hub/:id", authenticateToken, updateKnowledgeHubContent);
 router.delete(
   "/knowledge-hub/:id",

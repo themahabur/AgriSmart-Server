@@ -21,7 +21,7 @@ const knowledgeHubSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      enum: ["blog", "article", "guide", "news", "tutorial"],
+      enum: ["blog", "article", "guide", "news", "video"],
       index: true,
     },
     category: {
@@ -66,7 +66,7 @@ const knowledgeHubSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["draft", "published", "archived"],
+      enum: ["pending", "draft", "published", "archived"],
       default: "draft",
       index: true,
     },

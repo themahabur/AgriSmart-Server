@@ -233,6 +233,34 @@ const updateKnowledgeHubContent = async (req, res) => {
   }
 };
 
+const deleteKnowledgeHubContent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedContent = await KnowledgeHub.findByIdAndDelete(id);
+
+    if (!deletedContent) {
+      return res.status(404).json({
+        success: false,
+        message: "Knowledge hub content not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Knowledge hub content deleted successfully",
+      data: { id: deletedContent._id },
+    });
+  } catch (error) {
+    console.error("Error deleting knowledge hub content:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete knowledge hub content",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createKnowledgeHubContent,
   getKnowledgeHubContent,

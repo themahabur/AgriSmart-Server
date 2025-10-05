@@ -51,6 +51,12 @@ const knowledgeHubSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    readTime: {
+      type: String,
+      default: "00:00 min",
+      trim: true,
+    },
+
     media: {
       type: String,
       trim: true,

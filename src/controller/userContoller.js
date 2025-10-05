@@ -54,6 +54,52 @@ exports.getUserById = async (req, res) => {
   }
 };
 
+// Get all users (admin only with pagination and filtering)
+exports.getAllUsers = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    // Build filter object
+    const filter = {};
+    if (req.query.role) filter.role = req.query.role;
+    if (req.query.accountStatus) filter.accountStatus = req.query.accountStatus;
+    if (req.query.division)
+      filter.division = new RegExp(req.query.division, "i");
+    if (req.query.district)
+      filter.district = new RegExp(req.query.district, "i");
+
+    const users = await Users.find(filter)
+      .select(
+        "name email role division district upazila accountStatus createdAt lastLogin"
+      )
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalUsers = await Users.countDocuments(filter);
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.status(200).json({
+      status: true,
+      message: "Users retrieved successfully",
+      data: {
+        users,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalUsers,
+          hasNextPage: page < totalPages,
+          hasPrevPage: page > 1,
+        },
+      },
+    });
+  } catch (error) {
+    return handleError(error, res);
+  }
+};
+
 // Search users by name, email, or location
 exports.searchUsers = async (req, res) => {
   try {

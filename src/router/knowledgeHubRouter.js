@@ -17,10 +17,10 @@ router.get("/knowledge-hub/slug/:slug", getKnowledgeHubContentBySlug);
 
 // Protected routes (require authentication)
 router.post("/knowledge-hub", createKnowledgeHubContent);
-router.put("/knowledge-hub/:id", authenticateToken, updateKnowledgeHubContent);
+router.put("/knowledge-hub/:id", updateKnowledgeHubContent);
 router.delete(
   "/knowledge-hub/:id",
-  authenticateToken,
+
   deleteKnowledgeHubContent
 );
 

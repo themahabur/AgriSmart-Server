@@ -27,6 +27,33 @@ exports.getCurrentUser = async (req, res) => {
   }
 };
 
+// Get user by ID (admin only or public profile)
+exports.getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Basic user info for public profile
+    const user = await Users.findById(userId).select(
+      "name email role division district upazila farmingExperience primaryCrops farmSize accountStatus createdAt avatar bio"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "User data retrieved successfully",
+      data: user,
+    });
+  } catch (error) {
+    return handleError(error, res);
+  }
+};
+
 // Search users by name, email, or location
 exports.searchUsers = async (req, res) => {
   try {

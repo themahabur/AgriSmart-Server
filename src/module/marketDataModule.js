@@ -2,13 +2,6 @@ const mongoose = require("mongoose");
 
 const marketDataSchema = new mongoose.Schema(
   {
-    // Unique date identifier for the market data
-    dataDate: {
-      type: String,
-      required: true,
-      unique: true,
-      index: true,
-    },
     // Today's market data array
     todayMarketData: [
       {
@@ -125,8 +118,5 @@ const marketDataSchema = new mongoose.Schema(
     },
   }
 );
-
-// Add compound index for better query performance
-marketDataSchema.index({ dataDate: 1, fetchedAt: -1 });
 
 module.exports = mongoose.model("MarketData", marketDataSchema);

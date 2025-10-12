@@ -16,31 +16,31 @@ const fetchAndStoreMarketData = async (req, res) => {
     const today = new Date().toISOString().split("T")[0];
 
     // Check if data already exists for today
-    const existingData = await marketDataModule.findOne({
-      "todayMarketData.price_date": today,
-    });
+    // const existingData = await marketDataModule.findOne({
+    //   "todayMarketData.price_date": today,
+    // });
 
-    if (existingData) {
-      console.log("data exists");
-      // Data for today already exists, no need to store again
-      const responseData = {
-        success: true,
-        message: "Market data for today already exists, no update needed",
-        data: {
-          documentId: existingData._id,
-          todayItemsCount: existingData.totalTodayItems,
-          preItemsCount: existingData.totalPreItems,
-          fetchedAt: existingData.fetchedAt,
-          dataDate: today,
-          isUpdated: false,
-        },
-      };
+    // if (existingData) {
+    //   console.log("data exists");
+    //   // Data for today already exists, no need to store again
+    //   const responseData = {
+    //     success: true,
+    //     message: "Market data for today already exists, no update needed",
+    //     data: {
+    //       documentId: existingData._id,
+    //       todayItemsCount: existingData.totalTodayItems,
+    //       preItemsCount: existingData.totalPreItems,
+    //       fetchedAt: existingData.fetchedAt,
+    //       dataDate: today,
+    //       isUpdated: false,
+    //     },
+    //   };
 
-      if (res) {
-        return res.status(200).json(responseData);
-      }
-      return responseData;
-    }
+    //   if (res) {
+    //     return res.status(200).json(responseData);
+    //   }
+    //   return responseData;
+    // }
 
     // Process today's market data
     const todayMarketData = marketPrice.map((item1) => {
@@ -69,33 +69,23 @@ const fetchAndStoreMarketData = async (req, res) => {
     });
 
     // Delete all existing data (since it's old data)
-    await marketDataModule.deleteMany({});
+    // await marketDataModule.deleteMany({});
 
     // Create new market data entry
     const marketDataEntry = new marketDataModule({
+      todayMarketData: todayMarketData,
+      preMarketData: preMarketData,
       fetchedAt: new Date(),
       dataSource: "External API",
-      totalTodayItems: todayMarketData.length,
-      totalPreItems: preMarketData.length,
-      data: {
-        todayMarketData: todayMarketData,
-        preMarketData: preMarketData,
-      },
     });
 
+    // Save to MongoDB
+    const savedData = await marketDataEntry.save();
+
+    // Prepare and send response
     const responseData = {
       success: true,
       message: "Market data fetched and stored successfully",
-      data: {
-        documentId: marketDataEntry._id,
-        dataDate: marketDataEntry.dataDate,
-        todayItemsCount: marketDataEntry.totalTodayItems,
-        preItemsCount: marketDataEntry.totalPreItems,
-        fetchedAt: marketDataEntry.fetchedAt,
-        isNewRecord:
-          !marketDataEntry.createdAt ||
-          marketDataEntry.createdAt === marketDataEntry.updatedAt,
-      },
     };
 
     if (res) {

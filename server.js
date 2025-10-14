@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const userRouter = require("./src/router/userRouter");
 const storeMarketRouter = require("./src/router/marketRouter");
 const KnowledgeHubRouter = require("./src/router/knowledgeHubRouter");
+const farmRouter = require("./src/router/farmRouter");
 const connectDB = require("./src/config/db");
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use("/api/users", userRouter);
 app.use("/api/", storeMarketRouter);
 app.use("/api/", KnowledgeHubRouter);
+app.use("/api/", farmRouter);
 
 // MongoDB connection
 connectDB();

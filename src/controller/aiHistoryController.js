@@ -68,7 +68,31 @@ const getAllAiHistory = async (req, res) => {
   }
 };
 
+const deleteAllHistory = async (req, res) => {
+  const email = req.query.email;
+  if (!email) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Email query parameter is required" });
+  }
+  try {
+    const filter = { email };
+    await aiHistory.deleteMany(filter);
+    return res.status(200).json({
+      success: true,
+      message: "All history records deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting all history records:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while deleting history records",
+    });
+  }
+};
+
 module.exports = {
   createHistory,
   getAllAiHistory,
+  deleteAllHistory,
 };

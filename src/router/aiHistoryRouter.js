@@ -1,6 +1,6 @@
 const express = require("express");
 
-import { createHistory } from "../controller/aiHistoryContoller";
+const { createHistory } = require("../controller/aiHistoryController");
 
 const router = express.Router();
 

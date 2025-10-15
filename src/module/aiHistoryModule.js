@@ -22,6 +22,10 @@ const aiHistorySchema = new mongoose.Schema(
       default: Date.now,
     },
 
+    email: {
+      type: String,
+    },
+
     // Common/Shared fields that work for both types
     question: String,
     description: String,

@@ -44,8 +44,12 @@ const createHistory = async (req, res) => {
 };
 
 const getAllAiHistory = async (req, res) => {
+  const email = req.query.email;
   try {
-    const diagnoses = await aiHistory.find();
+    const filter = email ? { email } : {};
+    const diagnoses = await aiHistory
+      .find({ ...filter })
+      .sort({ timestamp: -1 });
 
     const total = await aiHistory.countDocuments(filter);
 

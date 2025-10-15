@@ -123,7 +123,7 @@ exports.searchUsers = async (req, res) => {
         { upazila: searchRegex },
         { primaryCrops: { $in: [searchRegex] } },
       ],
-      accountStatus: "active",
+      //   accountStatus: "active",
     })
       .select("name email role division district upazila primaryCrops avatar")
       .limit(20);

@@ -1,7 +1,7 @@
 const aiHistory = require("../module/aiHistoryModule");
 
 // POST - Create new diagnosis (both ai-diagnosis and image-analysis)
-const createDiagnosis = async (req, res) => {
+const createHistory = async (req, res) => {
   try {
     const { type } = req.body;
 
@@ -44,5 +44,5 @@ const createDiagnosis = async (req, res) => {
 };
 
 module.exports = {
-  createDiagnosis,
+  createHistory,
 };

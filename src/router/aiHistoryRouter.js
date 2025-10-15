@@ -1,10 +1,10 @@
 const express = require("express");
 
-import { createDiagnosis } from "../controller/aiHistoryContoller";
+import { createHistory } from "../controller/aiHistoryContoller";
 
 const router = express.Router();
 
 // AI History Routes
-router.post("/", createDiagnosis);
+router.post("/", createHistory);
 
 module.exports = router;

@@ -23,7 +23,7 @@ app.use("/api/users", userRouter);
 app.use("/api/", storeMarketRouter);
 app.use("/api/", KnowledgeHubRouter);
 app.use("/api/", farmRouter);
-app.use("api/ai-history", aiHistoryRouter);
+app.use("/api/ai-history", aiHistoryRouter);
 
 // MongoDB connection
 connectDB();

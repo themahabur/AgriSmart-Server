@@ -43,6 +43,28 @@ const createHistory = async (req, res) => {
   }
 };
 
+const getAllAiHistory = async (req, res) => {
+  try {
+    const diagnoses = await aiHistory.find();
+
+    const total = await aiHistory.countDocuments(filter);
+
+    return res.status(200).json({
+      success: true,
+      data: diagnoses,
+      total,
+    });
+  } catch (error) {
+    console.error("Error fetching diagnoses:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createHistory,
+  getAllAiHistory,
 };

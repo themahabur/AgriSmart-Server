@@ -4,17 +4,13 @@ const { handleError } = require("../utils/errorHandler");
 // GET /api/farms
 exports.listFarms = async (req, res) => {
   try {
-    const userId = req.user.id;
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const skip = (page - 1) * limit;
 
     const [farms, total] = await Promise.all([
-      Farm.find({ user: userId })
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit),
-      Farm.countDocuments({ user: userId }),
+      Farm.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Farm.countDocuments(),
     ]);
 
     const totalPages = Math.ceil(total / limit) || 1;
@@ -41,11 +37,7 @@ exports.listFarms = async (req, res) => {
 // POST /api/farms
 exports.createFarm = async (req, res) => {
   try {
-    const userId = req.user.id;
-
     const payload = sanitizeFarmPayload(req.body);
-    payload.user = userId;
-
     const farm = await Farm.create(payload);
 
     return res.status(201).json({
@@ -59,13 +51,11 @@ exports.createFarm = async (req, res) => {
 };
 
 // GET /api/farms/:id
-// Get a single farm (owner only)
 exports.getFarmById = async (req, res) => {
   try {
-    const userId = req.user.id;
     const { id } = req.params;
+    const farm = await Farm.findById(id);
 
-    const farm = await Farm.findOne({ _id: id, user: userId });
     if (!farm) {
       return res.status(404).json({
         status: false,
@@ -84,16 +74,13 @@ exports.getFarmById = async (req, res) => {
 };
 
 // PUT /api/farms/:id
-// Update a farm (owner only)
 exports.updateFarm = async (req, res) => {
   try {
-    const userId = req.user.id;
     const { id } = req.params;
-
     const updates = sanitizeFarmPayload(req.body, { partial: true });
 
-    const farm = await Farm.findOneAndUpdate(
-      { _id: id, user: userId },
+    const farm = await Farm.findByIdAndUpdate(
+      id,
       { $set: updates },
       { new: true, runValidators: true }
     );
@@ -101,7 +88,7 @@ exports.updateFarm = async (req, res) => {
     if (!farm) {
       return res.status(404).json({
         status: false,
-        message: "Farm not found or not authorized",
+        message: "Farm not found",
       });
     }
 
@@ -118,14 +105,13 @@ exports.updateFarm = async (req, res) => {
 // DELETE /api/farms/:id
 exports.deleteFarm = async (req, res) => {
   try {
-    const userId = req.user.id;
     const { id } = req.params;
+    const farm = await Farm.findByIdAndDelete(id);
 
-    const farm = await Farm.findOneAndDelete({ _id: id, user: userId });
     if (!farm) {
       return res.status(404).json({
         status: false,
-        message: "Farm not found or not authorized",
+        message: "Farm not found",
       });
     }
 
@@ -138,7 +124,7 @@ exports.deleteFarm = async (req, res) => {
   }
 };
 
-// Build a safe payload from incoming body to prevent unwanted field injection
+// Sanitize payload
 function sanitizeFarmPayload(body, options = {}) {
   const allow = {
     name: true,
@@ -162,5 +148,3 @@ function sanitizeFarmPayload(body, options = {}) {
   });
   return result;
 }
-
-

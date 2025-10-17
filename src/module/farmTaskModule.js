@@ -38,5 +38,5 @@ const farmTaskSchema = new mongoose.Schema({
 });
 
 // Create and export the model
-const Task = mongoose.model("FarmTask", farmTaskSchema);
-export default Task;
+const farmTask = mongoose.model("FarmTask", farmTaskSchema);
+export default farmTask;

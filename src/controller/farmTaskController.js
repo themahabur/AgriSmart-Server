@@ -36,3 +36,34 @@ exports.createFarmTask = async (req, res) => {
     });
   }
 };
+
+//  Get all tasks by user email
+exports.getTasksByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    // Find all tasks that match the email
+    const tasks = await farmTask.find({ email });
+
+    if (tasks.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No tasks found for this email." });
+    }
+
+    res.status(200).json({
+      message: "Tasks fetched successfully.",
+      tasks,
+    });
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    res.status(500).json({
+      message: "Server error while fetching tasks.",
+      error: error.message,
+    });
+  }
+};

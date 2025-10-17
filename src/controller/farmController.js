@@ -3,13 +3,16 @@ const { handleError } = require("../utils/errorHandler");
 
 // GET /api/farms
 exports.listFarms = async (req, res) => {
+  const email = req.params.email;
+
   try {
+    const filter = email ? { userEmail: email } : {};
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const skip = (page - 1) * limit;
 
     const [farms, total] = await Promise.all([
-      Farm.find().sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Farm.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
       Farm.countDocuments(),
     ]);
 
@@ -127,9 +130,10 @@ exports.deleteFarm = async (req, res) => {
 // Sanitize payload
 function sanitizeFarmPayload(body, options = {}) {
   const allow = {
+    userEmail: true,
     name: true,
     location: true,
-    size: true,
+    sizeAcre: true,
     crop: true,
     status: true,
     coordinates: true,

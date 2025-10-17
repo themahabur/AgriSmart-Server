@@ -2,11 +2,10 @@ const mongoose = require("mongoose");
 
 const farmSchema = new mongoose.Schema(
   {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
-      required: false,
-      index: true,
+    userEmail: {
+      type: String,
+      required: true,
+      trim: true,
     },
 
     name: {
@@ -21,9 +20,9 @@ const farmSchema = new mongoose.Schema(
       trim: true,
       default: null,
     },
-    size: {
-      type: String,
-      trim: true,
+    sizeAcre: {
+      type: Number,
+      min: 0,
       default: null,
     },
     crop: {
@@ -75,6 +74,7 @@ const farmSchema = new mongoose.Schema(
         {
           source: { type: String, trim: true, default: null },
           lastDate: { type: Date, default: null },
+          tubeWellDepth: { type: Number, min: 0, default: null }, // ✅ new field
         },
         { _id: false }
       ),
@@ -101,7 +101,7 @@ const farmSchema = new mongoose.Schema(
 );
 
 // Helpful indexes
-farmSchema.index({ user: 1, createdAt: -1 });
+farmSchema.index({ userEmail: 1, createdAt: -1 });
 farmSchema.index({ crop: 1 });
 farmSchema.index({ status: 1 });
 

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const farmTaskSchema = new mongoose.Schema({
   email: {
@@ -38,5 +38,4 @@ const farmTaskSchema = new mongoose.Schema({
 });
 
 // Create and export the model
-const farmTask = mongoose.model("FarmTask", farmTaskSchema);
-export default farmTask;
+module.exports = mongoose.model("FarmTask", farmTaskSchema);

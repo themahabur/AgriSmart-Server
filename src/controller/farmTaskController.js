@@ -1,7 +1,7 @@
-import farmTask from "../module/farmTaskModule";
+const farmTask = require("../module/farmTaskModule");
 
 // Create a new task
-export const createFarmTask = async (req, res) => {
+exports.createFarmTask = async (req, res) => {
   try {
     const { email, title, des, date, priority, status, farmName } = req.body;
 

@@ -6,7 +6,12 @@ exports.getUserDashboard = async (req, res) => {
   try {
     const farmCount = await Farm.countDocuments({ userEmail: email });
     const taskCount = await farmTask.countDocuments({ email: email });
-    console.log("farm count", farmCount, "task count", taskCount);
+
+    res.status(200).json({
+      farmCount,
+      taskCount,
+    });
+    // console.log("farm count", farmCount, "task count", taskCount);
   } catch (error) {
     console.error("Error fetching dashboard data:", error);
   }

@@ -8,6 +8,7 @@ const KnowledgeHubRouter = require("./src/router/knowledgeHubRouter");
 const farmRouter = require("./src/router/farmRouter");
 const aiHistoryRouter = require("./src/router/aiHistoryRouter");
 const farmTaskRouter = require("./src/router/farmTaskRouter");
+const dashboardRouter = require("./src/router/dashboardRouter");
 const connectDB = require("./src/config/db");
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use("/api/", KnowledgeHubRouter);
 app.use("/api/", farmRouter);
 app.use("/api/ai-history", aiHistoryRouter);
 app.use("/api", farmTaskRouter);
+app.use("/api/dashboard", dashboardRouter);
 
 // MongoDB connection
 connectDB();

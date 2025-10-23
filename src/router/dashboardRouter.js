@@ -4,6 +4,6 @@ const { getUserDashboard } = require("../controller/userDashboardController");
 
 const router = express.Router();
 
-router.get("/dashboard/:email", getUserDashboard);
+router.get("/user/:email", getUserDashboard);
 
 module.exports = router;

@@ -7,6 +7,8 @@ const storeMarketRouter = require("./src/router/marketRouter");
 const KnowledgeHubRouter = require("./src/router/knowledgeHubRouter");
 const farmRouter = require("./src/router/farmRouter");
 const aiHistoryRouter = require("./src/router/aiHistoryRouter");
+const farmTaskRouter = require("./src/router/farmTaskRouter");
+const dashboardRouter = require("./src/router/dashboardRouter");
 const connectDB = require("./src/config/db");
 
 dotenv.config();
@@ -15,7 +17,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  })
+);
 app.use(express.json());
 
 // Routes
@@ -24,6 +31,8 @@ app.use("/api/", storeMarketRouter);
 app.use("/api/", KnowledgeHubRouter);
 app.use("/api/", farmRouter);
 app.use("/api/ai-history", aiHistoryRouter);
+app.use("/api", farmTaskRouter);
+app.use("/api/dashboard", dashboardRouter);
 
 // MongoDB connection
 connectDB();

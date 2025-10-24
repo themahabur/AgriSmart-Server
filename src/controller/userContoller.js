@@ -27,6 +27,31 @@ exports.getCurrentUser = async (req, res) => {
   }
 };
 
+// get user by email
+exports.getUserByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    const user = await Users.findOne({ email }).select(
+      "-password -emailVerificationToken -phoneVerificationCode -passwordResetToken -passwordResetExpires"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+      });
+    }
+    res.status(200).json({
+      status: true,
+      message: "User data retrieved successfully",
+      data: user,
+    });
+  } catch (error) {
+    return handleError(error, res);
+  }
+};
+
 // Get user by ID (admin only or public profile)
 exports.getUserById = async (req, res) => {
   try {

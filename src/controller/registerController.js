@@ -1,5 +1,6 @@
 const Users = require("../module/userModule");
 const { handleError } = require("../utils/errorHandler");
+const RecentActivity = require("../module/recentActivityModule");
 
 exports.registerUser = async (req, res) => {
   try {
@@ -30,6 +31,13 @@ exports.registerUser = async (req, res) => {
       phone,
     });
     await newUser.save();
+
+    // Record recent activity
+    await RecentActivity.create({
+      user: newUser._id,
+      activityType: "user_register",
+      details: "User registered",
+    });
 
     res.status(201).json({
       status: true,

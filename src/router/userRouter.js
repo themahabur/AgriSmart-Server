@@ -23,3 +23,4 @@ router.get("/all", getAllUsers); // Get all users with pagination (protected)
 router.get("/:userId", getUserById); // Get user by ID (public profile)
 
 module.exports = router;
+

@@ -67,3 +67,53 @@ exports.getTasksByEmail = async (req, res) => {
     });
   }
 };
+
+// Update a task by ID
+exports.updateTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, des, date, priority, status, farmName } = req.body;
+
+    const updatedTask = await farmTask.findByIdAndUpdate(
+      id,
+      { title, des, date, priority, status, farmName },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ message: "Task not found." });
+    }
+
+    res.status(200).json({
+      message: "Task updated successfully.",
+      task: updatedTask,
+    });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    res.status(500).json({
+      message: "Server error while updating task.",
+      error: error.message,
+    });
+  }
+};
+
+// Delete a task by ID
+exports.deleteTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedTask = await farmTask.findByIdAndDelete(id);
+
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found." });
+    }
+
+    res.status(200).json({ message: "Task deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting task:", error);
+    res.status(500).json({
+      message: "Server error while deleting task.",
+      error: error.message,
+    });
+  }
+};

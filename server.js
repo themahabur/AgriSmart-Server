@@ -9,6 +9,7 @@ const farmRouter = require("./src/router/farmRouter");
 const aiHistoryRouter = require("./src/router/aiHistoryRouter");
 const farmTaskRouter = require("./src/router/farmTaskRouter");
 const dashboardRouter = require("./src/router/dashboardRouter");
+const recentActivityRouter = require("./src/router/recentActivityRouter"); // Added this line
 const connectDB = require("./src/config/db");
 
 dotenv.config();
@@ -33,51 +34,12 @@ app.use("/api/", farmRouter);
 app.use("/api/ai-history", aiHistoryRouter);
 app.use("/api", farmTaskRouter);
 app.use("/api/dashboard", dashboardRouter);
+app.use("/api/recent-activity", recentActivityRouter);
 
 // MongoDB connection
 connectDB();
 
 app.get("/", async (req, res) => {
-  // try {
-  //   const [nameData, priceData] = await Promise.all([
-  //     axios.get(process.env.NAME_API),
-  //     axios.get(process.env.PRICE_API),
-  //   ]);
-  //   const marketPrice = priceData.data.data;
-  //   const nameDataArr = nameData.data.data.commodityNameList;
-
-  //   const todayMarketData = marketPrice.map((item1) => {
-  //     const match = nameDataArr.find(
-  //       (item2) => item2.value === item1.commodity_id
-  //     );
-  //     return {
-  //       ...item1,
-  //       name: match ? match.text : "Unknown",
-  //       nameEn: match ? match.text_en : "Unknown",
-  //       nameBn: match ? match.text_bn : "Unknown",
-  //     };
-  //   });
-
-  //   const preMarketData = priceData.data.prevPrice.map((item1) => {
-  //     const match = nameDataArr.find(
-  //       (item2) => item2.value === item1.commodity_id
-  //     );
-  //     return {
-  //       ...item1,
-  //       name: match ? match.text : "Unknown",
-  //       nameEn: match ? match.text_en : "Unknown",
-  //       nameBn: match ? match.text_bn : "Unknown",
-  //     };
-  //   });
-
-  //   res.status(200).json({
-  //     status: true,
-  //     message: "Success",
-  //     data: { todayMarketData: todayMarketData, preMarketData: preMarketData },
-  //   });
-  // } catch (error) {
-  //   console.log("error", error);
-  // }
   res.send("Agrismart server is running");
 });
 

@@ -9,7 +9,7 @@ const farmRouter = require("./src/router/farmRouter");
 const aiHistoryRouter = require("./src/router/aiHistoryRouter");
 const farmTaskRouter = require("./src/router/farmTaskRouter");
 const dashboardRouter = require("./src/router/dashboardRouter");
-const recentActivityRouter = require("./src/router/recentActivityRouter"); // Added this line
+const recentActivityRouter = require("./src/router/recentActivityRouter");
 const connectDB = require("./src/config/db");
 
 dotenv.config();

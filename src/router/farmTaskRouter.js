@@ -12,9 +12,19 @@ const { authenticateToken } = require("../middleware/authentication");
 const router = express.Router();
 
 // Route to create a new farm task
-// router.post("/farm-tasks", authenticateToken, recordActivity("task_create"), createFarmTask);
-router.post("/farm-tasks", authenticateToken, createFarmTask);
-router.get("/farm-tasks/:email", getTasksByEmail);
+router.post(
+  "/farm-tasks",
+  authenticateToken,
+  recordActivity("task_create"),
+  createFarmTask
+);
+
+router.get(
+  "/farm-tasks/:email",
+  authenticateToken,
+  recordActivity("task_view"),
+  getTasksByEmail
+);
 router.put(
   "/farm-tasks/:id",
   authenticateToken,

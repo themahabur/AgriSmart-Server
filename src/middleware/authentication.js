@@ -27,7 +27,7 @@ const authenticateToken = async (req, res, next) => {
   if (isJwt(token)) {
     try {
       decoded = verifyToken(token); // your own JWT
-      console.log("✅ Manual token verified:", decoded);
+      // console.log("✅ Manual token verified:", decoded);
 
       user = await Users.findById(decoded.id);
       if (!user) throw new Error("User not found");
@@ -41,7 +41,7 @@ const authenticateToken = async (req, res, next) => {
 
       return next();
     } catch (manualErr) {
-      console.warn("Manual token failed:", manualErr.message);
+      // console.warn("Manual token failed:", manualErr.message);
     }
   }
 
@@ -53,7 +53,7 @@ const authenticateToken = async (req, res, next) => {
     });
 
     decoded = ticket.getPayload();
-    console.log("✅ Google token verified:", decoded);
+    // console.log("✅ Google token verified:", decoded);
 
     user = await Users.findOne({ email: decoded.email });
     if (!user) throw new Error("User not found");
@@ -67,7 +67,7 @@ const authenticateToken = async (req, res, next) => {
 
     return next();
   } catch (googleErr) {
-    console.warn("Google token failed:", googleErr.message);
+    // console.warn("Google token failed:", googleErr.message);
   }
 
   // If both verifications fail

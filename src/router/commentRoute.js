@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { getBlogComments, createComment, addReply, getCommentStats, deleteComment } = require("../controller/commentController");
+const {
+  getBlogComments,
+  createComment,
+  addReply,
+  getCommentStats,
+  deleteComment,
+} = require("../controller/commentController");
 
 router.get("/blog/:blogSlug", getBlogComments);
 router.post("/", createComment);
@@ -9,6 +15,6 @@ router.get("/stats/:blogSlug", getCommentStats);
 
 router.delete("/:commentId", deleteComment);
 
-router.delete("/:commentId/replies/:replyId", deleteReply);
+// router.delete("/:commentId/replies/:replyId", deleteReply);
 
 module.exports = router;

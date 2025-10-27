@@ -24,13 +24,13 @@ const recordActivity = (activityType) => {
     try {
       const userId = req.user?.id;
       if (!userId) {
-        console.warn("recordActivity: Missing user ID");
+        // console.warn("recordActivity: Missing user ID");
         return next();
       }
 
       const getMessage = activityMessages[activityType];
       if (!getMessage) {
-        console.warn(`recordActivity: Unknown activity type "${activityType}"`);
+        // console.warn(`recordActivity: Unknown activity type "${activityType}"`);
         return next();
       }
 
@@ -42,9 +42,9 @@ const recordActivity = (activityType) => {
         details,
       });
 
-      console.info(
-        `recordActivity: Logged "${activityType}" for user ${userId}`
-      );
+      // console.info(
+      //   `recordActivity: Logged "${activityType}" for user ${userId}`
+      // );
       next();
     } catch (error) {
       console.error("recordActivity error:", error);

@@ -11,9 +11,9 @@ const verifyToken = (token) => {
 };
 
 const extractToken = (token) => {
-  const authHeader = token.headers.authorization;
-  if (authHeader && authHeader.startsWith("Bearer ")) {
-    return authHeader.split(" ")[1];
+  // const authHeader = token.headers.authorization;
+  if (token && token.startsWith("Bearer ")) {
+    return token.split(" ")[1];
   }
   return null;
 };

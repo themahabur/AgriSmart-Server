@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const userRouter = require('./src/router/userRouter');
 const connectDB = require('./src/config/db');
+const communityRoutes = require('./src/router/communityRoutes');
 
 dotenv.config();
 
@@ -16,6 +17,9 @@ app.use(express.json());
 
 // Routes
 app.use('/api/users', userRouter);
+
+// Route Middleware
+app.use('/api/community', communityRoutes);
 
 // MongoDB connection
 connectDB();

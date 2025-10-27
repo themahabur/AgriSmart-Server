@@ -6,6 +6,7 @@ const {
   addReply,
   getCommentStats,
   deleteComment,
+  deleteReply,
 } = require("../controller/commentController");
 
 router.get("/blog/:blogSlug", getBlogComments);
@@ -15,6 +16,6 @@ router.get("/stats/:blogSlug", getCommentStats);
 
 router.delete("/:commentId", deleteComment);
 
-// router.delete("/:commentId/replies/:replyId", deleteReply);
+router.delete("/:commentId/replies/:replyId", deleteReply);
 
 module.exports = router;

@@ -10,6 +10,7 @@ const aiHistoryRouter = require("./src/router/aiHistoryRouter");
 const commentRoute = require("./src/router/commentRoute");
 const farmTaskRouter = require("./src/router/farmTaskRouter");
 const dashboardRouter = require("./src/router/dashboardRouter");
+const communityRoutes = require("./src/router/communityRoutes");
 const recentActivityRouter = require("./src/router/recentActivityRouter");
 const connectDB = require("./src/config/db");
 
@@ -33,10 +34,11 @@ app.use("/api/", storeMarketRouter);
 app.use("/api/", KnowledgeHubRouter);
 app.use("/api/", farmRouter);
 app.use("/api/ai-history", aiHistoryRouter);
-app.use('/api', commentRoute);
+app.use("/api", commentRoute);
 app.use("/api", farmTaskRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/recent-activity", recentActivityRouter);
+app.use("/api/community", communityRoutes);
 
 // MongoDB connection
 connectDB();

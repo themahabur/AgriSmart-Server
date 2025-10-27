@@ -1,6 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { getBlogComments, createComment, addReply, getCommentStats, deleteComment, deleteReply } = require("../controller/commentController");
+const {
+  getBlogComments,
+  createComment,
+  addReply,
+  getCommentStats,
+  deleteComment,
+  deleteReply,
+} = require("../controller/commentController");
 
 router.get("/blog/:blogSlug", getBlogComments);
 router.post("/", createComment);

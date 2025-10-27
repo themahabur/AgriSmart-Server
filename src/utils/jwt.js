@@ -7,7 +7,13 @@ const generateToken = (payload, expiresIn = "7d") => {
 };
 
 const verifyToken = (token) => {
-  return jwt.verify(token, process.env.JWT_SECRET);
+  if (!token) throw new Error("No token provided");
+
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET);
+  } catch (err) {
+    throw new Error("Invalid JWT: " + err.message);
+  }
 };
 
 const extractToken = (token) => {

@@ -1,13 +1,13 @@
-const CommunityPost = require('../module/CommunityPost');
+const CommunityPost = require("../module/CommunityPost");
 
 const createPost = async (req, res) => {
   try {
     const { title, description, user, image, tags } = req.body;
 
-    if (!user || !user.name || !user.location || !user.avatar) {
+    if (!user || !user.name || !user.avatar) {
       return res.status(400).json({
         success: false,
-        message: 'User object missing required fields',
+        message: "User object missing required fields",
       });
     }
 
@@ -21,7 +21,7 @@ const createPost = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Post Created Successfully',
+      message: "Post Created Successfully",
       data: newPost,
     });
   } catch (error) {
@@ -46,7 +46,7 @@ const getSinglePost = async (req, res) => {
     if (!post)
       return res
         .status(404)
-        .json({ success: false, message: 'Post not found' });
+        .json({ success: false, message: "Post not found" });
 
     res.status(200).json({ success: true, data: post });
   } catch (error) {

@@ -97,7 +97,7 @@ exports.getAllUsers = async (req, res) => {
 
     const users = await Users.find(filter)
       .select(
-        "name email role division district upazila accountStatus createdAt lastLogin"
+        "name email avatar role division district upazila accountStatus createdAt lastLogin"
       )
       .sort({ createdAt: -1 })
       .skip(skip)

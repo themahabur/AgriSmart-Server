@@ -72,7 +72,14 @@ exports.getTasksByEmail = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, des, date, priority, status, farmName } = req.body;
+    const {
+      title,
+      des,
+      date,
+      priority,
+      status = "completed",
+      farmName,
+    } = req.body;
 
     const updatedTask = await farmTask.findByIdAndUpdate(
       id,

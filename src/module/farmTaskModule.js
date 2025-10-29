@@ -28,8 +28,8 @@ const farmTaskSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "in-progress", "completed"],
-    default: "pending",
+    enum: ["in-progress", "completed"],
+    default: "in-progress",
   },
   farmName: {
     type: String,

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const communityPostSchema = new mongoose.Schema(
   {
@@ -7,9 +7,9 @@ const communityPostSchema = new mongoose.Schema(
 
     user: {
       name: { type: String, required: true },
-      location: { type: String, required: true },
+      email: { type: String, required: true },
       avatar: { type: String },
-      role: { type: String, default: 'member' },
+      role: { type: String, default: "farmer" },
     },
 
     image: { type: String, default: null },
@@ -23,4 +23,4 @@ const communityPostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('CommunityPost', communityPostSchema);
+module.exports = mongoose.model("CommunityPost", communityPostSchema);

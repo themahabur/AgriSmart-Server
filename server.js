@@ -11,6 +11,7 @@ const commentRoute = require("./src/router/commentRoute");
 const farmTaskRouter = require("./src/router/farmTaskRouter");
 const dashboardRouter = require("./src/router/dashboardRouter");
 const communityRoutes = require("./src/router/communityRoutes");
+const messageRouter = require("./src/router/messageRouter");
 const recentActivityRouter = require("./src/router/recentActivityRouter");
 const connectDB = require("./src/config/db");
 
@@ -39,6 +40,7 @@ app.use("/api", farmTaskRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/recent-activity", recentActivityRouter);
 app.use("/api/community", communityRoutes);
+app.use("/api/messages", messageRouter);
 
 // MongoDB connection
 connectDB();

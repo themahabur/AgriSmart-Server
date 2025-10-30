@@ -41,13 +41,14 @@ exports.createFarmTask = async (req, res) => {
 exports.getTasksByEmail = async (req, res) => {
   try {
     const { email } = req.params;
+    const { status = "in-progress" } = req.query;
 
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
 
     // Find all tasks that match the email
-    const tasks = await farmTask.find({ email });
+    const tasks = await farmTask.find({ email, status });
 
     if (tasks.length === 0) {
       return res

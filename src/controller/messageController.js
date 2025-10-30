@@ -35,7 +35,6 @@ const createMessage = async (req, res) => {
       createdAt: newMessage.createdAt,
       updatedAt: newMessage.updatedAt,
     };
-    console.log("New message:", formattedMessage);
 
     res.status(201).json({
       status: true,

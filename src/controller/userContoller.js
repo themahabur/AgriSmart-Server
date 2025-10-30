@@ -6,9 +6,10 @@ exports.getCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const user = await Users.findById(userId).select(
-      "-password -emailVerificationToken -phoneVerificationCode -passwordResetToken -passwordResetExpires"
-    );
+    const user = await Users.findById(userId)
+      .select
+      // "-password -emailVerificationToken -phoneVerificationCode -passwordResetToken -passwordResetExpires"
+      ();
 
     if (!user) {
       return res.status(404).json({
@@ -119,6 +120,31 @@ exports.getAllUsers = async (req, res) => {
           hasPrevPage: page > 1,
         },
       },
+    });
+  } catch (error) {
+    return handleError(error, res);
+  }
+};
+
+// Update user profile (only for the user themselves)
+exports.updateUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userData = req.body;
+
+    const user = await Users.findByIdAndUpdate(userId, userData, { new: true });
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      status: true,
+      message: "User profile updated successfully",
+      data: user,
     });
   } catch (error) {
     return handleError(error, res);

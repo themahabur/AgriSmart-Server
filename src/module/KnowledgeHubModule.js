@@ -93,9 +93,13 @@ const knowledgeHubSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    likes: {
+     likes: {
       type: Number,
-      default: 0,
+      default: 0
+    },
+    bookmarkCount: {
+      type: Number,
+      default: 0
     },
     publishedAt: {
       type: Date,
@@ -110,12 +114,10 @@ const knowledgeHubSchema = new mongoose.Schema(
   }
 );
 
-// Add compound indexes for better query performance
 knowledgeHubSchema.index({ status: 1, category: 1, createdAt: -1 });
 knowledgeHubSchema.index({ tags: 1, status: 1 });
 knowledgeHubSchema.index({ "author.email": 1, status: 1 });
 
-// Pre-save middleware to set publishedAt when status changes to published
 knowledgeHubSchema.pre("save", function (next) {
   if (
     this.isModified("status") &&

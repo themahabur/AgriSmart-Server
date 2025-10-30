@@ -6,17 +6,21 @@ const {
   createKnowledgeHubContent,
   updateKnowledgeHubContent,
   deleteKnowledgeHubContent,
+  getPopularKnowledgeHubContent,
+  getRelatedKnowledgeHubContent,
+  toggleBookmark,
+  toggleLike,
+  getLikeCount,
+  getBookmarkCount,
 } = require("../controller/knowledgeHubContoller");
 const { authenticateToken } = require("../middleware/authentication");
 const recordActivity = require("../middleware/recentActivity");
 
 const router = express.Router();
 
-// Public routes
 router.get("/knowledge-hub", getKnowledgeHubContent);
 router.get("/knowledge-hub/slug/:slug", getKnowledgeHubContentBySlug);
 
-// Protected routes (require authentication)
 router.post(
   "/knowledge-hub",
   authenticateToken,
@@ -35,5 +39,21 @@ router.delete(
   recordActivity("delete_knowledge_hub_content"),
   deleteKnowledgeHubContent
 );
+
+router.post(
+  "/knowledge-hub/:id/like",
+  toggleLike
+);
+
+router.post(
+  "/knowledge-hub/:id/bookmark",
+  toggleBookmark
+);
+
+router.get("/knowledge-hub/popular", getPopularKnowledgeHubContent);
+router.get("/knowledge-hub/related", getRelatedKnowledgeHubContent);
+
+router.get("/knowledge-hub/:id/like-count", getLikeCount);
+router.get("/knowledge-hub/:id/bookmark-count", getBookmarkCount);
 
 module.exports = router;

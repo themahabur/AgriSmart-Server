@@ -177,7 +177,6 @@ const getKnowledgeHubContentBySlug = async (req, res) => {
       });
     }
 
-    // Increment views count
     await KnowledgeHubModule.findByIdAndUpdate(content._id, {
       $inc: { views: 1 },
     });
@@ -202,7 +201,6 @@ const updateKnowledgeHubContent = async (req, res) => {
     const { id } = req.params;
     const updateData = req.body;
 
-    // Remove sensitive fields that shouldn't be updated directly
     delete updateData._id;
     delete updateData.createdAt;
     delete updateData.updatedAt;
@@ -263,10 +261,210 @@ const deleteKnowledgeHubContent = async (req, res) => {
   }
 };
 
+const toggleLike = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const content = await KnowledgeHubModule.findById(id);
+    
+    if (!content) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Content not found" 
+      });
+    }
+
+    content.likes = (content.likes || 0) + 1;
+    await content.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Like added successfully",
+      data: { 
+        likes: content.likes 
+      },
+    });
+  } catch (error) {
+    console.error("Error toggling like:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to toggle like",
+      error: error.message,
+    });
+  }
+};
+
+const toggleBookmark = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const content = await KnowledgeHubModule.findById(id);
+    
+    if (!content) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Content not found" 
+      });
+    }
+
+    content.bookmarkCount = (content.bookmarkCount || 0) + 1;
+    await content.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Bookmark added successfully",
+      data: { 
+        bookmarkCount: content.bookmarkCount
+      },
+    });
+  } catch (error) {
+    console.error("Error toggling bookmark:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to toggle bookmark",
+      error: error.message,
+    });
+  }
+};
+
+
+const getPopularKnowledgeHubContent = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 5;
+
+    const popularContent = await KnowledgeHubModule.find({ status: "published" })
+      .sort({ likes: -1, views: -1 })
+      .limit(limit)
+      .lean();
+
+    if (popularContent.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No popular knowledge hub content found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: popularContent,
+      message: "Popular knowledge hub content retrieved successfully",
+    });
+  } catch (error) {
+    console.error("Error fetching popular knowledge hub content:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch popular knowledge hub content",
+      error: error.message,
+    });
+  }
+};
+
+
+const getRelatedKnowledgeHubContent = async (req, res) => {
+  try {
+    const { tags } = req.query;
+    const limit = parseInt(req.query.limit) || 5;
+
+    if (!tags) {
+      return res.status(400).json({
+        success: false,
+        message: "Tags are required to find related content",
+      });
+    }
+
+    const tagArray = tags.split(",").map((tag) => tag.trim().toLowerCase());
+
+    const relatedContent = await KnowledgeHubModule.find({
+      tags: { $in: tagArray },
+      status: "published",
+    })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    if (relatedContent.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No related knowledge hub content found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: relatedContent,
+      message: "Related knowledge hub content retrieved successfully",
+    });
+  } catch (error) {
+    console.error("Error fetching related knowledge hub content:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch related knowledge hub content",
+      error: error.message,
+    });
+  }
+};
+
+const getLikeCount = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const content = await KnowledgeHubModule.findById(id);
+    if (!content) {
+      return res.status(404).json({
+        success: false,
+        message: "Content not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      likeCount: content.likes || 0, 
+      message: "Like count retrieved successfully",
+    });
+  } catch (error) {
+    console.error("Error fetching like count:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch like count",
+      error: error.message,
+    });
+  }
+};
+
+const getBookmarkCount = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const content = await KnowledgeHubModule.findById(id);
+    if (!content) {
+      return res.status(404).json({
+        success: false,
+        message: "Content not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      bookmarkCount: content.bookmarkCount || 0,
+      message: "Bookmark count retrieved successfully",
+    });
+  } catch (error) {
+    console.error("Error fetching bookmark count:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch bookmark count",
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   createKnowledgeHubContent,
   getKnowledgeHubContent,
   getKnowledgeHubContentBySlug,
   updateKnowledgeHubContent,
   deleteKnowledgeHubContent,
+  toggleLike,
+  toggleBookmark,
+  getPopularKnowledgeHubContent,
+  getRelatedKnowledgeHubContent,
+  getLikeCount,
+  getBookmarkCount,
 };

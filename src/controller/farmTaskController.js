@@ -50,11 +50,11 @@ exports.getTasksByEmail = async (req, res) => {
     // Find all tasks that match the email
     const tasks = await farmTask.find({ email, status });
 
-    if (tasks.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No tasks found for this email." });
-    }
+    // if (tasks.length === 0) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "No tasks found for this email." });
+    // }
 
     res.status(200).json({
       message: "Tasks fetched successfully.",

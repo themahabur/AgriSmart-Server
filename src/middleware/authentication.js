@@ -41,7 +41,7 @@ const authenticateToken = async (req, res, next) => {
 
       return next();
     } catch (manualErr) {
-      console.warn("Manual token failed:", manualErr.message);
+      // console.warn("Manual token failed:", manualErr.message);
     }
   }
 

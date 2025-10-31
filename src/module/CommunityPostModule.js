@@ -14,7 +14,7 @@ const postSchema = new Schema(
     },
     author: {
       type: Schema.Types.ObjectId,
-      ref: "User", // This MUST match the name you used when creating your User model
+      ref: "Users", // This MUST match the name you used when creating your User model
       required: true,
       index: true,
     },
@@ -31,7 +31,7 @@ const postSchema = new Schema(
     likes: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Users",
       },
     ],
     comments: [

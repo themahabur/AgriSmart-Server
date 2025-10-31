@@ -9,7 +9,6 @@ exports.createPost = async (req, res) => {
   try {
     const { title, content, image, tags } = req.body;
     const author = req.user.id;
-    console.log(author);
 
     const post = await CommunityPost.create({
       title,
@@ -31,12 +30,11 @@ exports.createPost = async (req, res) => {
 // @desc    Get all posts
 // @access  Public
 exports.getAllPosts = async (req, res) => {
-  console.log("hello world");
   try {
     const posts = await CommunityPost.find({})
       .populate("author", "name avatar") // Attach author's name and avatar
       .sort({ createdAt: -1 }); // Show newest posts first
-    console.log(posts);
+
     res.status(200).json({ success: true, count: posts?.length, data: posts });
   } catch (error) {
     // console.log(error);

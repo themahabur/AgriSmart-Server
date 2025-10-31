@@ -103,8 +103,8 @@ exports.deletePost = async (req, res) => {
 // @access  Private
 exports.likePost = async (req, res) => {
   try {
-    const userId = req.user._id;
-    const post = await Post.findById(req.params.id);
+    const userId = req.user.id;
+    const post = await CommunityPost.findById(req.params.id);
 
     if (!post) {
       return res

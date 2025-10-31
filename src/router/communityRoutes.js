@@ -27,7 +27,7 @@ router
 
 // // --- LIKE ROUTE ---
 // // Base Path: /api/community
-// router.patch("/:id/like", authenticateToken, likePost);
+router.patch("/:id/like", authenticateToken, likePost);
 
 // // --- COMMENT ROUTE ---
 // // A common RESTful pattern for a nested resource

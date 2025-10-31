@@ -46,7 +46,7 @@ exports.getAllPosts = async (req, res) => {
 // @access  Public
 exports.getPostById = async (req, res) => {
   try {
-    const post = await Post.findById(req.params.id)
+    const post = await CommunityPost.findById(req.params.id)
       .populate("author", "name avatar")
       .populate({
         // This is how you populate nested documents

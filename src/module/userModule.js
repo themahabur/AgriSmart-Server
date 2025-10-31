@@ -54,7 +54,10 @@ const usersSchema = new mongoose.Schema(
     },
 
     // Profile Information
-    avatar: { type: String, default: null },
+    avatar: {
+      type: String,
+      default: "https://i.ibb.co.com/bjSQPhVS/avater.webp",
+    },
     bio: { type: String, maxlength: 500, trim: true },
     dateOfBirth: {
       type: Date,

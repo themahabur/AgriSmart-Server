@@ -20,10 +20,10 @@ router
   .get(getAllPosts) // GET /api/community
   .post(authenticateToken, createPost);
 
-// router
-//   .route("/:id")
-//   .get(getPostById) // GET /api/community/some_post_id
-//   .delete(authenticateToken, deletePost);
+router
+  .route("/:id")
+  .get(getPostById) // GET /api/community/some_post_id
+  .delete(authenticateToken, deletePost);
 
 // // --- LIKE ROUTE ---
 // // Base Path: /api/community

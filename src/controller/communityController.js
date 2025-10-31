@@ -1,60 +1,112 @@
-const CommunityPost = require("../module/CommunityPost");
+const CommunityPost = require("../module/CommunityPostModule");
+const Comment = require("../module/CommunityCommentModule");
 
-const createPost = async (req, res) => {
+// --- POST CONTROLLERS ---
+
+// @desc    Create a new post
+// @access  Private
+exports.createPost = async (req, res) => {
   try {
-    const { title, description, image, tags, user } = req.body;
+    const { title, content, image, tags } = req.body;
+    const author = req.user.id;
+    console.log(author);
 
-    const post = new CommunityPost({
+    const post = await CommunityPost.create({
       title,
-      description,
+      content,
       image,
       tags,
-      user,
+      author,
     });
 
-    const createdPost = await post.save();
-    // We need to populate the author info for the response to be consistent
-    await createdPost.populate("user", "name avatar");
+    // Populate author details before sending back
+    await post.populate("author", "name avatar");
 
-    res.status(201).json({ success: true, data: createdPost });
+    res.status(201).json({ success: true, data: post });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
 
-// Get all posts
-const getAllPosts = async (req, res) => {
+// @desc    Get all posts
+// @access  Public
+exports.getAllPosts = async (req, res) => {
+  console.log("hello world");
   try {
-    const posts = await CommunityPost.find().sort({ createdAt: -1 });
-    res.status(200).json({ success: true, data: posts });
+    const posts = await CommunityPost.find({})
+      .populate("author", "name avatar") // Attach author's name and avatar
+      .sort({ createdAt: -1 }); // Show newest posts first
+    console.log(posts);
+    res.status(200).json({ success: true, count: posts?.length, data: posts });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    // console.log(error);
+    res.status(500).json({ success: false, message: `Server Error ${error}` });
   }
 };
 
-// Get single post
-const getSinglePost = async (req, res) => {
+// @desc    Get a single post by ID
+// @access  Public
+exports.getPostById = async (req, res) => {
   try {
-    const post = await CommunityPost.findById(req.params.id);
-    if (!post)
+    const post = await Post.findById(req.params.id)
+      .populate("author", "name avatar")
+      .populate({
+        // This is how you populate nested documents
+        path: "comments",
+        populate: {
+          path: "author",
+          select: "name avatar",
+        },
+      });
+
+    if (!post) {
       return res
         .status(404)
         .json({ success: false, message: "Post not found" });
-
+    }
     res.status(200).json({ success: true, data: post });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
-const likePost = async (req, res) => {
+// @desc    Delete a post
+// @access  Private
+exports.deletePost = async (req, res) => {
   try {
-    // Assuming your auth middleware attaches the user object with an _id
-    const userId = req.user.id;
+    const post = await Post.findById(req.params.id);
 
-    console.log("User ID:", userId);
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+    if (post.author.toString() !== req.user._id.toString()) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not authorized" });
+    }
+    // Also delete all comments associated with the post
+    await Comment.deleteMany({ post: req.params.id });
 
-    const post = await CommunityPost.findById(req.params.id);
+    await post.deleteOne();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Post and associated comments removed" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+// --- LIKE CONTROLLER ---
+
+// @desc    Like or Unlike a post
+// @access  Private
+exports.likePost = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const post = await Post.findById(req.params.id);
 
     if (!post) {
       return res
@@ -62,40 +114,51 @@ const likePost = async (req, res) => {
         .json({ success: false, message: "Post not found" });
     }
 
-    // --- THIS IS THE FIX ---
-    // First, check if post.likes is an array. If not, it's old data.
-    if (!Array.isArray(post.likes)) {
-      // Initialize it as a new array. Now the rest of the code will work.
-      post.likes = [];
-    }
-    // --- END OF FIX ---
-
-    // Now we can safely call array methods on post.likes
     const index = post.likes.findIndex(
       (id) => id.toString() === userId.toString()
     );
 
     if (index > -1) {
-      // Already liked, so unlike it (pull)
-      post.likes.splice(index, 1);
+      post.likes.splice(index, 1); // User has liked, so unlike
     } else {
-      // Not liked, so like it (push)
-      post.likes.push(userId);
+      post.likes.push(userId); // User has not liked, so like
     }
 
     await post.save();
-
-    // Return the updated array of likes
     res.status(200).json({ success: true, data: post.likes });
   } catch (error) {
-    console.error("Like Post Error:", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
-module.exports = {
-  createPost,
-  getAllPosts,
-  getSinglePost,
-  likePost,
+// --- COMMENT CONTROLLER ---
+
+// @desc    Create a new comment on a post
+// @access  Private
+exports.createComment = async (req, res) => {
+  try {
+    const { content } = req.body;
+    const author = req.user._id;
+    const postId = req.params.postId; // Note: we'll name the param 'postId'
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+
+    const comment = await Comment.create({ content, author, post: postId });
+
+    // Add the comment's ID to the post's comments array
+    post.comments.push(comment._id);
+    await post.save();
+
+    // Populate author details before sending back
+    await comment.populate("author", "name avatar");
+
+    res.status(201).json({ success: true, data: comment });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
 };

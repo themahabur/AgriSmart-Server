@@ -37,7 +37,7 @@ const postSchema = new Schema(
     comments: [
       {
         type: Schema.Types.ObjectId,
-        ref: "Comment", // This MUST match the name of the Comment model
+        ref: "CommunityComment", // This MUST match the name of the Comment model
       },
     ],
   },
@@ -50,11 +50,10 @@ const postSchema = new Schema(
 
 // Virtual properties are not stored in the DB but can be requested by the frontend
 postSchema.virtual("likeCount").get(function () {
-  return this.likes.length;
+  return this.likes ? this.likes.length : 0;
 });
-
 postSchema.virtual("commentCount").get(function () {
-  return this.comments.length;
+  return this.comments?.length || 0;
 });
 
 const CommunityPost = mongoose.model("CommunityPost", postSchema);

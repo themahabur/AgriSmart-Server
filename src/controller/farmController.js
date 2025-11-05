@@ -142,6 +142,7 @@ function sanitizeFarmPayload(body, options = {}) {
     irrigation: true,
     pestAlert: true,
     organicPractices: true,
+    harvestSummary: true,
   };
 
   const result = {};

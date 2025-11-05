@@ -30,8 +30,7 @@ router
 router.patch("/:id/like", authenticateToken, likePost);
 
 // // --- COMMENT ROUTE ---
-// // A common RESTful pattern for a nested resource
 // // Base Path: /api/community
-// router.post("/:postId/comments", authenticateToken, createComment);
+router.post("/:postId/comments", authenticateToken, createComment);
 
 module.exports = router;

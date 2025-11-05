@@ -10,12 +10,12 @@ const commentSchema = new Schema(
     },
     author: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Users",
       required: true,
     },
     post: {
       type: Schema.Types.ObjectId,
-      ref: "Post",
+      ref: "CommunityPost",
       required: true,
       index: true, // Index for faster lookups of comments by post
     },

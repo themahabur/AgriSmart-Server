@@ -1,5 +1,5 @@
-const CommunityPost = require("../module/CommunityPostModule");
-const Comment = require("../module/CommunityCommentModule");
+const CommunityPost = require("../module/communityPostModule");
+const CommunityComment = require("../module/communityCommentModule");
 
 // --- POST CONTROLLERS ---
 
@@ -136,17 +136,21 @@ exports.likePost = async (req, res) => {
 exports.createComment = async (req, res) => {
   try {
     const { content } = req.body;
-    const author = req.user._id;
+    const author = req.user.id;
     const postId = req.params.postId; // Note: we'll name the param 'postId'
 
-    const post = await Post.findById(postId);
+    const post = await CommunityPost.findById(postId);
     if (!post) {
       return res
         .status(404)
         .json({ success: false, message: "Post not found" });
     }
 
-    const comment = await Comment.create({ content, author, post: postId });
+    const comment = await CommunityComment.create({
+      content,
+      author,
+      post: postId,
+    });
 
     // Add the comment's ID to the post's comments array
     post.comments.push(comment._id);

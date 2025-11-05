@@ -80,6 +80,18 @@ const farmSchema = new mongoose.Schema(
       ),
       default: {},
     },
+    harvestSummary: {
+      type: new mongoose.Schema(
+        {
+          totalCost: { type: Number, min: 0, default: null },
+          salesAmount: { type: Number, min: 0, default: null },
+          yield: { type: Number, min: 0, default: null },
+          yieldUnit: { type: String, trim: true, default: null },
+        },
+        { _id: false }
+      ),
+      default: {},
+    },
 
     // Alerts & practices
     pestAlert: { type: Boolean, default: false },

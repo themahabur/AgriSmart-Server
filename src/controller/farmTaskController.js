@@ -13,6 +13,7 @@ exports.createFarmTask = async (req, res) => {
     // Create a new task
     const newTask = new farmTask({
       email,
+      user: req.user.id,
       title,
       des,
       date,

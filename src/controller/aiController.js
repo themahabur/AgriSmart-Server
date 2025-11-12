@@ -1,12 +1,13 @@
 const Farm = require("../module/farmModule");
+const FarmTask = require("../module/farmTaskModule");
 const axios = require("axios");
 
 exports.getAiSuggestions = async (req, res) => {
   try {
     // 1. Get User and ALL potential data from the request body
     const userId = req.user.id;
-    // The `completedTasks` will be present for the Farm Page, and undefined for the Weather Page
-    const { currentWeather, forecast, completedTasks } = req.body;
+
+    const { currentWeather, forecast, farmId } = req.body;
 
     if (!currentWeather || !forecast) {
       return res
@@ -15,12 +16,23 @@ exports.getAiSuggestions = async (req, res) => {
     }
 
     // 2. Fetch User's Farm Data (this is always needed)
-    const farm = await Farm.findOne({ user: userId });
+    const farm = farmId
+      ? await Farm.findById(farmId)
+      : await Farm.findOne({ user: userId });
+
     if (!farm) {
       return res
         .status(404)
         .json({ success: false, message: "No farm data found." });
     }
+
+    // Fetch Recently Completed Tasks for this specific farm ---
+    const recentTasks = await FarmTask.find({
+      farm: farm._id,
+      status: "completed",
+    })
+      .sort({ updatedAt: -1 }) // Get the most recently completed
+      .limit(5); // Limit to the last 5 to keep the prompt concise
 
     // 3. Dynamically Construct the Prompt
     let taskSection = ""; // Start with an empty string for the task section

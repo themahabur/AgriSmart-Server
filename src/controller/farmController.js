@@ -40,7 +40,7 @@ exports.listFarms = async (req, res) => {
 // POST /api/farms
 exports.createFarm = async (req, res) => {
   try {
-    const payload = sanitizeFarmPayload(req.body);
+    const payload = sanitizeFarmPayload({ ...req.body, user: req.user.id });
     const farm = await Farm.create(payload);
 
     return res.status(201).json({
@@ -131,6 +131,7 @@ exports.deleteFarm = async (req, res) => {
 function sanitizeFarmPayload(body, options = {}) {
   const allow = {
     userEmail: true,
+    user: true,
     name: true,
     location: true,
     sizeAcre: true,

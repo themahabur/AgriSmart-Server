@@ -3,7 +3,8 @@ const farmTask = require("../module/farmTaskModule");
 // Create a new task
 exports.createFarmTask = async (req, res) => {
   try {
-    const { email, title, des, date, priority, status, farmName } = req.body;
+    const { email, title, des, date, priority, status, farmName, farmId } =
+      req.body;
 
     // Basic validation
     if (!email || !title) {
@@ -13,12 +14,14 @@ exports.createFarmTask = async (req, res) => {
     // Create a new task
     const newTask = new farmTask({
       email,
+      user: req.user.id,
       title,
       des,
       date,
       priority,
       status,
       farmName,
+      farmId,
     });
 
     // Save to MongoDB

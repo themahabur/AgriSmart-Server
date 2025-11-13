@@ -100,9 +100,9 @@ exports.getAllUsers = async (req, res) => {
       .select(
         "name email avatar role division district upazila accountStatus createdAt lastLogin"
       )
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+      .sort({ createdAt: -1 });
+    // .skip(skip)
+    // .limit(limit);
 
     const totalUsers = await Users.countDocuments(filter);
     const totalPages = Math.ceil(totalUsers / limit);

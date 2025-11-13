@@ -6,8 +6,10 @@ exports.getAiSuggestions = async (req, res) => {
   try {
     // 1. Get User and ALL potential data from the request body
     const userId = req.user.id;
+    console.log(1);
 
-    const { currentWeather, forecast, farmId } = req.body;
+    const { weatherData, farmId } = req.body;
+    const { currentWeather, forecast } = weatherData;
 
     if (!currentWeather || !forecast) {
       return res
@@ -35,16 +37,11 @@ exports.getAiSuggestions = async (req, res) => {
       .limit(5); // Limit to the last 5 to keep the prompt concise
 
     // 3. Dynamically Construct the Prompt
-    let taskSection = ""; // Start with an empty string for the task section
-    if (completedTasks && completedTasks.length > 0) {
-      // If task data exists, build that part of the prompt
-      const taskList = completedTasks
-        .map(
-          (task) =>
-            `- ${task.name} (Completed on: ${new Date(
-              task.completedAt
-            ).toDateString()})`
-        )
+    // --- Dynamically build the prompt with all available context ---
+    let taskSection = "";
+    if (recentTasks.length > 0) {
+      const taskList = recentTasks
+        .map((task) => `- "${task.title}" (Completed recently)`)
         .join("\n");
       taskSection = `
         **Recent Completed Tasks:**
@@ -58,14 +55,11 @@ exports.getAiSuggestions = async (req, res) => {
       **User's Farm Details:**
       - Crop Type: ${farm.cropType}
       - Soil Type: ${farm.soilType}
-      - Planting Date: ${farm.plantingDate.toDateString()}
 
       ${taskSection} // <-- This section will only be included if tasks were provided
 
       **Current Weather & Forecast:**
-      - Today's Condition: ${currentWeather.temperature.degrees}°C, ${
-      currentWeather.weatherCondition.description.text
-    }
+      - Today's Condition: ${currentWeather.temperature.degrees}°C, ${currentWeather.weatherCondition.description.text}
       - Forecast: The next few days will be [Summarize the forecast briefly here].
 
       **Your Task:**
@@ -79,11 +73,11 @@ exports.getAiSuggestions = async (req, res) => {
       ]
     `;
 
-    // 4. Call OpenRouter API (no changes here)
+    // 4. Call OpenRouter API
     const response = await axios.post(
       "https://openrouter.ai/api/v1/chat/completions",
       {
-        model: "mistralai/mistral-7b-instruct",
+        model: "openrouter/polaris-alpha",
         messages: [{ role: "user", content: prompt }],
       },
       {

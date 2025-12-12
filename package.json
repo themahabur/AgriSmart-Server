@@ -4,9 +4,9 @@
   "description": "AgriSmart Server - AI-powered agriculture platform backend",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "build": "echo 'Build completed'",
+    "start": "node init && node server.js",
+    "dev": "node init && node server.js",
+    "build": "node init && echo 'Build completed'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

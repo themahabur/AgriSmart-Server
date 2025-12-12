@@ -47,7 +47,7 @@ Ensure you have the following installed locally:
 
 1.  **Clone the Repository** (if not already done):
     ```bash
-    git clone https://github.com/your-username/agri-smart-server.git
+    git clone https://github.com/themahabur/AgriSmart-Server.git
     cd agri-smart-server
     ```
 

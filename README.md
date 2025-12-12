@@ -145,7 +145,3 @@ Contributions are welcome!
 5.  Open a Pull Request.
 
 ---
-
-## 📄 License
-
-This project is licensed under the **ISC License**.
